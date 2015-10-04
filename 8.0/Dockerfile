@@ -10,7 +10,7 @@ RUN set -x; \
             nodejs \
             npm \
             python-support \
-            python-pyinotify \
+            python-pyinotify sudo \
         && npm install -g less less-plugin-clean-css \
         && ln -s /usr/bin/nodejs /usr/bin/node \
         && curl -o wkhtmltox.deb -SL http://nightly.odoo.com/extra/wkhtmltox-0.12.1.2_linux-jessie-amd64.deb \
@@ -22,7 +22,8 @@ RUN set -x; \
 
 # Install Odoo
 ENV ODOO_VERSION 8.0
-ENV ODOO_RELEASE 20150401
+ENV ODOO_RELEASE 20150904
+# ENV ODOO_RELEASE latest
 RUN set -x; \
         curl -o odoo.deb -SL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
         && dpkg --force-depends -i odoo.deb \
@@ -43,6 +44,9 @@ EXPOSE 8069 8071
 
 # Set the default config file
 ENV OPENERP_SERVER /etc/odoo/openerp-server.conf
+
+# add Odoo to sudoers
+RUN echo "odoo:odoo" | chpasswd && adduser odoo sudo
 
 # Set default user when running the container
 USER odoo
