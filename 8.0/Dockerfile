@@ -7,12 +7,11 @@ RUN set -x; \
         && apt-get install -y --no-install-recommends \
             ca-certificates \
             curl \
-            nodejs \
-            npm \
-            python-support \
+            node-less \
+            node-clean-css \
             python-pyinotify sudo \
-        && npm install -g less less-plugin-clean-css \
-        && ln -s /usr/bin/nodejs /usr/bin/node \
+            python-renderpm \
+            python-support \
         && curl -o wkhtmltox.deb -SL http://nightly.odoo.com/extra/wkhtmltox-0.12.1.2_linux-jessie-amd64.deb \
         && echo '40e8b906de658a2221b15e4e8cd82565a47d7ee8 wkhtmltox.deb' | sha1sum -c - \
         && dpkg --force-depends -i wkhtmltox.deb \
@@ -22,8 +21,7 @@ RUN set -x; \
 
 # Install Odoo
 ENV ODOO_VERSION 8.0
-ENV ODOO_RELEASE 20150904
-# ENV ODOO_RELEASE latest
+ENV ODOO_RELEASE 20151008
 RUN set -x; \
         curl -o odoo.deb -SL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
         && dpkg --force-depends -i odoo.deb \
@@ -36,13 +34,14 @@ COPY ./entrypoint.sh /
 COPY ./openerp-server.conf /etc/odoo/
 RUN chown odoo /etc/odoo/openerp-server.conf
 
-# new lines to chown before volumes
-# RUN chown odoo /mnt/extra-addons
-# RUN chown odoo /mnt/test-addons
-# apply concept only to filelocal, since is the only one giving problems
-# RUN chown odoo /mnt/filelocal/odoo
-
 # Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
+RUN mkdir -p /mnt/extra-addons \
+RUN mkdir -p /mnt/test-addons \
+RUN mkdir -p /mnt/filelocal/odoo \
+        && chown -R odoo /mnt/extra-addons \
+        && chown -R odoo /mnt/test-addons \
+        && chown -R odoo /mnt/filelocal/odoo
+
 VOLUME ["/var/lib/odoo", "/mnt/extra-addons", "/mnt/test-addons", "/mnt/filelocal/odoo"]
 
 # Expose Odoo services
