@@ -40,7 +40,7 @@ RUN chown odoo /etc/odoo/openerp-server.conf
 # RUN chown odoo /mnt/extra-addons
 # RUN chown odoo /mnt/test-addons
 # apply concept only to filelocal, since is the only one giving problems
-RUN chown odoo /mnt/filelocal/odoo
+# RUN chown odoo /mnt/filelocal/odoo
 
 # Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
 VOLUME ["/var/lib/odoo", "/mnt/extra-addons", "/mnt/test-addons", "/mnt/filelocal/odoo"]
