@@ -36,6 +36,12 @@ COPY ./entrypoint.sh /
 COPY ./openerp-server.conf /etc/odoo/
 RUN chown odoo /etc/odoo/openerp-server.conf
 
+# new lines to chown before volumes
+# RUN chown odoo /mnt/extra-addons
+# RUN chown odoo /mnt/test-addons
+# apply concept only to filelocal, since is the only one giving problems
+RUN chown odoo /mnt/filelocal/odoo
+
 # Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
 VOLUME ["/var/lib/odoo", "/mnt/extra-addons", "/mnt/test-addons", "/mnt/filelocal/odoo"]
 
