@@ -24,6 +24,7 @@ ENV ODOO_VERSION 8.0
 ENV ODOO_RELEASE 20151008
 RUN set -x; \
         curl -o odoo.deb -SL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
+        && echo 'f5109ed62235380304e8b953c60f5c0fa9c5c5cd odoo.deb' | sha1sum -c - \
         && dpkg --force-depends -i odoo.deb \
         && apt-get update \
         && apt-get -y install -f --no-install-recommends \
@@ -36,13 +37,11 @@ RUN chown odoo /etc/odoo/openerp-server.conf
 
 # Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
 RUN mkdir -p /mnt/extra-addons \
-RUN mkdir -p /mnt/test-addons \
 RUN mkdir -p /mnt/filelocal/odoo \
         && chown -R odoo /mnt/extra-addons \
-        && chown -R odoo /mnt/test-addons \
         && chown -R odoo /mnt/filelocal/odoo
 
-VOLUME ["/var/lib/odoo", "/mnt/extra-addons", "/mnt/test-addons", "/mnt/filelocal/odoo"]
+VOLUME ["/var/lib/odoo", "/mnt/extra-addons", "/mnt/filelocal/odoo"]
 
 # Expose Odoo services
 EXPOSE 8069 8071
