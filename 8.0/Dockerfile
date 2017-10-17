@@ -1,5 +1,5 @@
 FROM debian:jessie
-MAINTAINER Blanco Martín & Asociados <daniel@blancomartin.cl>
+MAINTAINER Blanco Martín & Asociados <info@blancomartin.cl>
 
 # Install some deps, lessc and less-plugin-clean-css, and wkhtmltopdf
 RUN set -x; \
