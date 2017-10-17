@@ -1,5 +1,5 @@
 FROM debian:jessie
-MAINTAINER Blanco Martín & Asociados <daniel@blancomartin.cl>
+MAINTAINER Odoo S.A. <info@odoo.com>
 
 # Install some deps, lessc and less-plugin-clean-css, and wkhtmltopdf
 RUN set -x; \
@@ -8,12 +8,11 @@ RUN set -x; \
             ca-certificates \
             curl \
             node-less \
-            node-clean-css \
             python-gevent \
             python-pip \
-            python-pyinotify \
             python-renderpm \
             python-support \
+            python-watchdog \
         && curl -o wkhtmltox.deb -SL http://nightly.odoo.com/extra/wkhtmltox-0.12.1.2_linux-jessie-amd64.deb \
         && echo '40e8b906de658a2221b15e4e8cd82565a47d7ee8 wkhtmltox.deb' | sha1sum -c - \
         && dpkg --force-depends -i wkhtmltox.deb \
@@ -22,13 +21,12 @@ RUN set -x; \
         && rm -rf /var/lib/apt/lists/* wkhtmltox.deb \
         && pip install psycogreen==1.0
 
-
 # Install Odoo
-ENV ODOO_VERSION 8.0
+ENV ODOO_VERSION 9.0
 ENV ODOO_RELEASE 20170815
 RUN set -x; \
-        curl -o odoo.deb -SL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
-        && echo '5835e966a07e5684b4f7bcc39585276b0bb68254 odoo.deb' | sha1sum -c - \
+        curl -o odoo.deb -SL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}c.${ODOO_RELEASE}_all.deb \
+        && echo '3d3b34cbbcd5f3fb739e85a2c855955322c0f328 odoo.deb' | sha1sum -c - \
         && dpkg --force-depends -i odoo.deb \
         && apt-get update \
         && apt-get -y install -f --no-install-recommends \
@@ -49,9 +47,6 @@ EXPOSE 8069 8071
 
 # Set the default config file
 ENV OPENERP_SERVER /etc/odoo/openerp-server.conf
-
-# add Odoo to sudoers
-RUN echo "odoo:odoo" | chpasswd && adduser odoo sudo
 
 # Set default user when running the container
 USER odoo
